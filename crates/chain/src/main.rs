@@ -41,6 +41,18 @@ fn init_tracing() -> eyre::Result<()> {
         .add_directive("actix=info".parse()?)
         .add_directive(EnvFilter::from_default_env().to_string().parse()?);
 
+    // Logs everything (default: INFO+) to stdout
+    let stdout_layer = fmt::layer()
+        .with_line_number(true)
+        .with_ansi(true)
+        .with_file(true)
+        .with_writer(std::io::stdout);
+
+    // Logs ERROR and above to stderr
+    let stderr_layer = fmt::layer()
+        .with_writer(std::io::stderr)
+        .with_filter(tracing_subscriber::filter::LevelFilter::ERROR);
+
     let output_layer = tracing_subscriber::fmt::layer()
         .with_line_number(true)
         .with_ansi(true)
